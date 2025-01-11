@@ -12,12 +12,14 @@ import subprocess
 
 from homeassistant.const import CONF_FILENAME, CONF_DEVICE, \
     EVENT_HOMEASSISTANT_STOP, STATE_ON, STATE_OFF, ATTR_BATTERY_LEVEL, \
-    ATTR_STATE, ATTR_DEVICE_CLASS, DEVICE_CLASS_TIMESTAMP
+    ATTR_STATE, ATTR_DEVICE_CLASS
+
+from homeassistant.components.sensor import SensorDeviceClass
 
 try:
-    from homeassistant.components.binary_sensor import PLATFORM_SCHEMA, BinarySensorEntity, DEVICE_CLASS_MOTION, DEVICE_CLASS_DOOR
+    from homeassistant.components.binary_sensor import PLATFORM_SCHEMA, BinarySensorEntity, BinarySensorDeviceClass
 except ImportError:
-    from homeassistant.components.binary_sensor import BinarySensorDevice as BinarySensorEntity, PLATFORM_SCHEMA, DEVICE_CLASS_MOTION, DEVICE_CLASS_DOOR
+    from homeassistant.components.binary_sensor import BinarySensorDevice as BinarySensorEntity, PLATFORM_SCHEMA, BinarySensorDeviceClass
 
 from homeassistant.helpers.restore_state import RestoreEntity
 
@@ -74,8 +76,8 @@ def setup_platform(hass, config, add_entites, discovery_info=None):
                 ATTR_AVAILABLE: True,
                 ATTR_MAC: event.MAC,
                 ATTR_STATE: 1 if sensor_state == "open" or sensor_state == "active" else 0,
-                ATTR_DEVICE_CLASS: DEVICE_CLASS_MOTION if sensor_type == "motion" else DEVICE_CLASS_DOOR ,
-                DEVICE_CLASS_TIMESTAMP: event.Timestamp.isoformat(),
+                ATTR_DEVICE_CLASS: BinarySensorDeviceClass.MOTION if sensor_type == "motion" else BinarySensorDeviceClass.DOOR ,
+                SensorDeviceClass.TIMESTAMP: event.Timestamp.isoformat(),
                 ATTR_RSSI: sensor_signal * -1,
                 ATTR_BATTERY_LEVEL: sensor_battery
             }
